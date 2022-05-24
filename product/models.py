@@ -1,5 +1,6 @@
 from django.db import models
 from ckeditor.fields import RichTextField
+from colorfield.fields import ColorField
 
 
 class CollectionProducts(models.Model):
@@ -43,7 +44,7 @@ class ImageProducts(models.Model):
 
 
 class ColorProducts(models.Model):
-    color = models.CharField(max_length=7)
+    color = ColorField(default='#FF0000')
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="colors")
 

@@ -1,19 +1,14 @@
 from django.contrib import admin
-from .models import Product, CollectionProducts, ImageProducts, ColorProducts
+from .models import Product, CollectionProducts, ImageProducts
 
 
 class GalleryInline(admin.TabularInline):
     fk_name = 'product'
     model = ImageProducts
-
-
-class ColorInline(admin.TabularInline):
-    fk_name = 'product'
-    model = ColorProducts
-
+    
 
 class ProductAdmin(admin.ModelAdmin):
-    inlines = [GalleryInline, ColorInline]
+    inlines = [GalleryInline, ]
 
 
 admin.site.register(Product, ProductAdmin)

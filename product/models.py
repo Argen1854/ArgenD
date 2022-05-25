@@ -39,13 +39,7 @@ class Product(models.Model):
 
 class ImageProducts(models.Model):
     image = models.ImageField(upload_to='')
-
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
-
-
-class ColorProducts(models.Model):
     color = ColorField(default='#FF0000')
 
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="colors")
-
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
 

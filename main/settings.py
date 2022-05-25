@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'colorfield',
+    'about_us',
     'drf_yasg',
     'ckeditor',
     'product',

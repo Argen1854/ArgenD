@@ -4,6 +4,7 @@ from rest_framework.generics import ListAPIView
 from .models import CollectionProducts, Product
 from .serializers import CollectionSerializer, ProductListSerializer, ProductDetailSerializer
 from rest_framework import status
+from rest_framework import pagination
 
 
 class ProductListAPIView(ListAPIView):
@@ -23,4 +24,5 @@ class ProductDetailAPIView(APIView):
 
 class CollectionListAPIView(ListAPIView):
     queryset = CollectionProducts.objects.all()
+    pagination_class = pagination.PageNumberPagination
     serializer_class = CollectionSerializer

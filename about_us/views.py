@@ -17,7 +17,6 @@ class AboutUsAPIView(APIView):
 class NewsListAPIView(ListAPIView):
     serializer_class = NewsSerializer
     pagination_class = PageNumberPagination
-    page_size = 1
     queryset = News.objects.all()
 
 

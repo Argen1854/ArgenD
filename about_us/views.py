@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 
+
 class AboutUsAPIView(APIView):
     def get(self, request):
         model = About.objects.all()

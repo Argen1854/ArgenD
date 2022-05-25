@@ -28,6 +28,15 @@ class Product(models.Model):
 
 
     @property
+    def prices(self):
+        if self.discount == 0 or self.discount == None:
+            return [{'price': self.price, 'discount': self.discount}]
+        else:
+            new_price = self.price - ((self.price//100) * self.discount)
+            return [{'price': self.price,'new_price': new_price, 'discount': self.discount}]
+
+
+    @property
     def get_images(self):
         images = ImageProducts.objects.filter(product=self)
         return [{'id': i.id, 'image': i.image.url} for i in images]

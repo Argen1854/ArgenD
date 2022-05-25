@@ -5,6 +5,7 @@ from .models import CollectionProducts, Product
 from .serializers import CollectionSerializer, ProductListSerializer, ProductDetailSerializer
 from rest_framework import status
 from rest_framework import pagination
+from django.db.models import Q
 
 
 class ProductListAPIView(ListAPIView):
@@ -18,8 +19,10 @@ class ProductDetailAPIView(APIView):
             product = Product.objects.get(id=id)
         except Product.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND, data={'message': 'Product not found'})
+        products = Product.objects.filter(~Q(id = product.id) & Q(collection_id = product.collection_id))
+        data_2 = ProductListSerializer(products[:5], many=True).data
         data = ProductDetailSerializer(product).data
-        return Response(data=data)
+        return Response(data=[data]+data_2)
 
 
 class CollectionListAPIView(ListAPIView):

@@ -1,16 +1,50 @@
-from rest_framework.views import APIView 
+from itertools import product
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import ListAPIView
-from .models import CollectionProducts, Product
-from .serializers import CollectionSerializer, ProductListSerializer, ProductDetailSerializer
+from .models import Product, CollectionProducts, Slider
+from .serializers import ProductListSerializer, CollectionSerializer, ProductDetailSerializer, BenefistSerializer, SliderSerializer
 from rest_framework import status
-from rest_framework import pagination
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.generics import ListAPIView
 from django.db.models import Q
+from about_us.models import Benefits
 
 
 class ProductListAPIView(ListAPIView):
     queryset = Product.objects.all()    
+    pagination_class = PageNumberPagination
     serializer_class = ProductListSerializer
+
+
+class SearchAPIView(APIView):
+    def get(self, request):
+        search = request.GET['search']
+        products = Product.objects.filter(title__contains=search)
+        if len(products) == 0:
+            collection = CollectionProducts.objects.all()[:5]
+            products = []
+            for i in collection:
+                
+                products.extend(Product.objects.filter(collection_id = i.id)[:1])
+            return Response(data=[{'products':products}])
+        data = ProductListSerializer(products[:12], many=True).data
+        return Response(data=data)
+
+
+
+class MainPageAPIView(APIView):
+    def get(self, request):
+        slider = Slider.objects.all()
+        hit = Product.objects.filter(checkbox_hit=True)
+        new = Product.objects.filter(checkbox_new=True)
+        collection = CollectionProducts.objects.all()
+        b = Benefits.objects.all()
+        slider_image = SliderSerializer(slider, many=True).data
+        hit = ProductListSerializer(hit[:8], many=True).data
+        new = ProductListSerializer(new[:4], many=True).data
+        collections = CollectionSerializer(collection[:4], many=True).data
+        b_s = BenefistSerializer(b, many=True).data
+        return Response(data=[{'slider_image': slider_image ,'hit': hit, 'new':new, 'Collection':collections, 'Benefist': b_s}])
 
 
 class ProductDetailAPIView(APIView):
@@ -27,5 +61,5 @@ class ProductDetailAPIView(APIView):
 
 class CollectionListAPIView(ListAPIView):
     queryset = CollectionProducts.objects.all()
-    pagination_class = pagination.PageNumberPagination
+    pagination_class = PageNumberPagination
     serializer_class = CollectionSerializer

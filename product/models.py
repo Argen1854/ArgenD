@@ -11,6 +11,12 @@ class CollectionProducts(models.Model):
     def __str__(self):
         return self.title
 
+    
+    class Meta:
+        verbose_name = 'Коллекция'
+        verbose_name_plural = 'Коллекции'
+
+
 class Product(models.Model):
     title = models.CharField(max_length=50)
     text = RichTextField()
@@ -45,6 +51,11 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+    
+    class Meta:
+        verbose_name = 'Товар'
+        verbose_name_plural = 'Товары'
+
 
 class ImageProducts(models.Model):
     image = models.ImageField(upload_to='')
@@ -52,3 +63,11 @@ class ImageProducts(models.Model):
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
 
+
+class Slider(models.Model):
+    image = models.ImageField(upload_to="")
+    link = models.TextField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Image'
+        verbose_name_plural = 'Слайдер'

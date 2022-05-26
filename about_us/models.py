@@ -13,6 +13,11 @@ class About(models.Model):
         return [{'id': i.id, 'image': i.image.url} for i in image]
 
 
+    class Meta:
+        verbose_name = 'О нас'
+        verbose_name_plural = 'О нас'
+
+
 class AboutImages(models.Model):
     image = models.ImageField(upload_to='')
 
@@ -26,6 +31,11 @@ class Benefits(models.Model):
     text = models.TextField()
 
 
+    class Meta:
+        verbose_name = 'Наши преимущества'
+        verbose_name_plural = 'Наши преимущества'
+
+
 class News(models.Model):
     images = models.ImageField(upload_to='')
 
@@ -36,8 +46,18 @@ class News(models.Model):
         return self.title
 
 
+    class Meta:
+        verbose_name = 'Новость'
+        verbose_name_plural = 'Новости'
+
+
 class HelpImages(models.Model):
     image = models.ImageField(upload_to='')
+
+
+    class Meta:
+        verbose_name = 'Image'
+        verbose_name_plural = 'Помощь изображение'
 
 
 class Help(models.Model):
@@ -48,9 +68,19 @@ class Help(models.Model):
         return self.question
 
     
+    class Meta:
+        verbose_name = 'Помощь'
+        verbose_name_plural = 'Помощь'
+
+    
 class Offer(models.Model):
     title = models.CharField(max_length=50)
     text = RichTextField()
 
     def __str__(self):
         return self.title
+
+
+    class Meta:
+        verbose_name = 'Публичная оферта'
+        verbose_name_plural = 'Публичная оферта'

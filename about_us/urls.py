@@ -8,3 +8,5 @@ urlpatterns = [
     path('api/v1/help/', HelpAPIViews.as_view()),
     path('api/v1/offer/', OfferAPIView.as_view()),
 ]
+
+

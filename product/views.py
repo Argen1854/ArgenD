@@ -20,13 +20,13 @@ class SearchAPIView(APIView):
     def get(self, request):
         search = request.GET['search']
         products = Product.objects.filter(title__contains=search)
-        if len(products) == 0:
-            collection = CollectionProducts.objects.all()[:5]
-            products = []
-            for i in collection:
+        # if len(products) == 0:
+        #     collection = CollectionProducts.objects.all()[:5]
+        #     products = []
+        #     for i in collection:
                 
-                products.extend(Product.objects.filter(collection_id = i.id)[:1])
-            return Response(data=[{'products':products}])
+        #         products.extend(Product.objects.filter(collection_id = i.id)[:1])
+        #     return Response(data=[{'products':products}])
         data = ProductListSerializer(products[:12], many=True).data
         return Response(data=data)
 

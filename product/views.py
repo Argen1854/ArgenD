@@ -16,22 +16,6 @@ class ProductListAPIView(ListAPIView):
     serializer_class = ProductListSerializer
 
 
-class SearchAPIView(APIView):
-    def get(self, request):
-        search = request.GET['search']
-        products = Product.objects.filter(title__contains=search)
-        # if len(products) == 0:
-        #     collection = CollectionProducts.objects.all()[:5]
-        #     products = []
-        #     for i in collection:
-                
-        #         products.extend(Product.objects.filter(collection_id = i.id)[:1])
-        #     return Response(data=[{'products':products}])
-        data = ProductListSerializer(products[:12], many=True).data
-        return Response(data=data)
-
-
-
 class MainPageAPIView(APIView):
     def get(self, request):
         slider = Slider.objects.all()
@@ -56,10 +40,50 @@ class ProductDetailAPIView(APIView):
         products = Product.objects.filter(~Q(id = product.id) & Q(collection_id = product.collection_id))
         data_2 = ProductListSerializer(products[:5], many=True).data
         data = ProductDetailSerializer(product).data
-        return Response(data=[data]+data_2)
+        return Response(data=[data, data_2])
 
 
 class CollectionListAPIView(ListAPIView):
     queryset = CollectionProducts.objects.all()
     pagination_class = PageNumberPagination
     serializer_class = CollectionSerializer
+
+
+class SearchAPIView(ListAPIView):
+    queryset = Product.objects.all()
+    pagination_class = PageNumberPagination
+    serializer_class = ProductListSerializer
+
+
+    def get_queryset(self):
+        search = self.request.GET['search']
+        if Product.objects.filter(title__contains=search).count() == 0:
+            return {'message': f'По запросу {search} ничего не найдено'}
+        return Product.objects.filter(title__contains=search)
+
+
+class CollectionDetailAPIView(ListAPIView):
+    queryset = Product.objects.all()
+    pagination_class = PageNumberPagination
+    serializer_class = ProductListSerializer
+
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        new = Product.objects.filter(checkbox_new = True)[:5]
+        new_s = ProductListSerializer(new, many=True).data
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response({'collection':serializer.data, 'new': new_s})
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+    def get_queryset(self):
+        id = self.kwargs['id']
+        return Product.objects.filter(collection_id=id)
+
+    

@@ -5,6 +5,7 @@ from .models import About, AboutImages, Benefits, News, HelpImages, Help, Offer
 class AboutInline(admin.TabularInline):
     fk_name = 'about'
     model = AboutImages
+    max_num = 3
 
 
 class AboutImage(admin.ModelAdmin):

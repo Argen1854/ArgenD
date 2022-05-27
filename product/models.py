@@ -22,7 +22,7 @@ class Product(models.Model):
     text = RichTextField()
     vendor_code = models.CharField(max_length=50)
     price = models.IntegerField()
-    discount = models.IntegerField()
+    discount = models.IntegerField(null=True, blank=True)
     size_range = models.CharField(max_length=30)
     cloth = models.CharField(max_length=30)
     quantity_in_line = models.IntegerField()

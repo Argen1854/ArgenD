@@ -81,15 +81,15 @@ class CollectionListAPIView(ListAPIView):
 
 
 class SearchAPIView(ListAPIView):
-    queryset = Product.objects.all()
+    queryset = Product
     pagination_class = PageNumberPagination
     serializer_class = ProductSerializer
 
-    # def get_queryset(self):
-    #     search = self.request.GET['search']
-    #     if Product.objects.filter(title__contains=search).count() == 0:
-    #         return {'message': f'По запросу {search} ничего не найдено'}
-    #     return Product.objects.filter(title__contains=search)
+    def get_queryset(self):
+        search = self.request.GET['search']
+        if Product.objects.filter(title__contains=search).count() == 0:
+            return {'message': f'По запросу {search} ничего не найдено'}
+        return Product.objects.filter(title__contains=search)
     
     # def get_serializer_context(self):
     #     fav = Favorites(self.request)

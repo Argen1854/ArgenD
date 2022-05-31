@@ -24,15 +24,6 @@ class FavoritesListAPIView(ListAPIView):
         return Product.objects.filter(id__in=fav.show())
 
 
-# class FavoritesListAPIView(APIView):
-    
-#     def get(self, request):
-#         fav = Favorites(request)
-#         product = Product.objects.filter(id__in = fav.show())
-#         data = ProductListSerializer(product, many=True).data
-#         return Response(data=data)
-
-
 class FavoritesAddAPIView(APIView):
     """Добавить товар в избранное"""
     def post(self, request, id):

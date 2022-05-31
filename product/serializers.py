@@ -67,3 +67,8 @@ class SliderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Slider
         fields = 'image link'.split()
+
+
+class CallbackSesializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100, min_length=5)
+    phone = serializers.CharField(max_length=100)

@@ -1,11 +1,10 @@
-from itertools import product
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Product, CollectionProducts, Slider
-from .serializers import ProductListSerializer, CollectionSerializer, ProductDetailSerializer, BenefistSerializer, SliderSerializer, ProductSerializer
+from .models import Product, CollectionProducts, Slider, CallBack
+from .serializers import ProductListSerializer, CollectionSerializer, ProductDetailSerializer, BenefistSerializer, SliderSerializer, ProductSerializer, CallbackSesializer
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView
 from django.db.models import Q
 from about_us.models import Benefits
 from cart.favorites import Favorites
@@ -119,5 +118,19 @@ class CollectionDetailAPIView(ListAPIView):
     def get_queryset(self):
         id = self.kwargs['id']
         return Product.objects.filter(collection_id=id)
+
+
+class CallbackAPIView(APIView):
+    serializer = CallbackSesializer
+    def post(self, request):
+        serializer = self.serializer(data = request.data)
+        if not serializer.is_valid():
+            return Response(data={'errors':serializer.errors}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        name = request.data.get('name')
+        phone = request.data.get('phone')
+        movie = CallBack.objects.create(name=name, phone=phone)
+        return Response(data={'message': "ok"}, status=status.HTTP_201_CREATED)
+
+
 
     

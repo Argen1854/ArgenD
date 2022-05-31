@@ -1,11 +1,43 @@
 from rest_framework import serializers
+
+from cart import favorites
 from .models import Product, CollectionProducts, Slider
 from about_us.models import Benefits
 
-class ProductListSerializer(serializers.ModelSerializer):
+
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = 'id get_images title text size_range collection prices'.split()
+        fields = 'id get_images title text size_range collection price discount new_price'.split()
+
+
+
+class ProductListSerializer(serializers.ModelSerializer):
+    favo = serializers.SerializerMethodField('fav')
+
+    class Meta:
+        model = Product
+        fields = 'id get_images title text size_range collection price discount new_price favo'.split()
+
+    def fav(self, obj):
+        favorites = self.context.get('fav')
+        print(favorites)
+        if obj.id in favorites:
+            return {'fav': True}
+        return {'fav': False}
+
+
+class ProductCartSerializer(serializers.ModelSerializer):
+    quantity = serializers.SerializerMethodField('get_context')
+
+    class Meta:
+        model = Product
+        fields = 'id get_images title text size_range collection price discount new_price quantity'.split()
+
+    def get_context(self, obj):
+        quantity = self.context.get('quantity')[str(obj.id)]['quantity']
+        return quantity
+
 
 class MainSerializer(serializers.ModelSerializer):
     def get_attribute(self, instance):
@@ -35,4 +67,3 @@ class SliderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Slider
         fields = 'image link'.split()
-

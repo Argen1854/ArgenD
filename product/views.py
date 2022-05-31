@@ -2,12 +2,13 @@ from itertools import product
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Product, CollectionProducts, Slider
-from .serializers import ProductListSerializer, CollectionSerializer, ProductDetailSerializer, BenefistSerializer, SliderSerializer
+from .serializers import ProductListSerializer, CollectionSerializer, ProductDetailSerializer, BenefistSerializer, SliderSerializer, ProductSerializer
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
 from django.db.models import Q
 from about_us.models import Benefits
+from cart.favorites import Favorites
 
 
 class ProductListAPIView(ListAPIView):
@@ -15,20 +16,50 @@ class ProductListAPIView(ListAPIView):
     pagination_class = PageNumberPagination
     serializer_class = ProductListSerializer
 
+    def get_serializer_context(self):
+        fav = Favorites(self.request)
+        return {'fav': fav.show()}
+        
 
-class MainPageAPIView(APIView):
-    def get(self, request):
-        slider = Slider.objects.all()
-        hit = Product.objects.filter(checkbox_hit=True)
-        new = Product.objects.filter(checkbox_new=True)
-        collection = CollectionProducts.objects.all()
-        b = Benefits.objects.all()
-        slider_image = SliderSerializer(slider, many=True).data
-        hit = ProductListSerializer(hit[:8], many=True).data
-        new = ProductListSerializer(new[:4], many=True).data
-        collections = CollectionSerializer(collection[:4], many=True).data
-        b_s = BenefistSerializer(b, many=True).data
-        return Response(data=[{'slider_image': slider_image ,'hit': hit, 'new':new, 'Collection':collections, 'Benefist': b_s}])
+
+class Page4Pagination(PageNumberPagination):
+    page_size = 4
+
+class MainSliderAPIView(ListAPIView):
+    queryset = Slider.objects.all()
+    serializer_class = SliderSerializer
+
+
+class MainBenefistAPIView(ListAPIView):
+    queryset = Benefits.objects.all()
+    serializer_class = BenefistSerializer
+    pagination_class = Page4Pagination
+
+
+class MainPageHitAPIVIew(ListAPIView):
+    queryset = Product.objects.all()
+    pagination_class = PageNumberPagination
+    serializer_class = ProductListSerializer
+
+    def get_serializer_context(self):
+        fav = Favorites(self.request)
+        return {'fav': fav.show()}
+
+    def get_queryset(self):
+        return Product.objects.filter(checkbox_hit=True)
+
+
+class MainPageNewAPIVIew(ListAPIView):
+    queryset = Product.objects.all()
+    pagination_class = PageNumberPagination
+    serializer_class = ProductListSerializer
+
+    def get_serializer_context(self):
+        fav = Favorites(self.request)
+        return {'fav': fav.show()}
+
+    def get_queryset(self):
+        return Product.objects.filter(checkbox_new=True)
 
 
 class ProductDetailAPIView(APIView):
@@ -52,14 +83,17 @@ class CollectionListAPIView(ListAPIView):
 class SearchAPIView(ListAPIView):
     queryset = Product.objects.all()
     pagination_class = PageNumberPagination
-    serializer_class = ProductListSerializer
+    serializer_class = ProductSerializer
 
-
-    def get_queryset(self):
-        search = self.request.GET['search']
-        if Product.objects.filter(title__contains=search).count() == 0:
-            return {'message': f'По запросу {search} ничего не найдено'}
-        return Product.objects.filter(title__contains=search)
+    # def get_queryset(self):
+    #     search = self.request.GET['search']
+    #     if Product.objects.filter(title__contains=search).count() == 0:
+    #         return {'message': f'По запросу {search} ничего не найдено'}
+    #     return Product.objects.filter(title__contains=search)
+    
+    # def get_serializer_context(self):
+    #     fav = Favorites(self.request)
+    #     return {'fav': fav.show()}
 
 
 class CollectionDetailAPIView(ListAPIView):

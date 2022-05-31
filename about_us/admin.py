@@ -12,9 +12,17 @@ class AboutImage(admin.ModelAdmin):
     inlines = [AboutInline,]
 
 
+class HelpH(admin.TabularInline):
+    model = Help
+
+
+class HelpHelp(admin.ModelAdmin):
+    inlines = [HelpH,]
+
+
+
 admin.site.register(About, AboutImage)
 admin.site.register(Benefits)
 admin.site.register(News)
-admin.site.register(HelpImages)
-admin.site.register(Help)
+admin.site.register(HelpImages, HelpHelp)
 admin.site.register(Offer)

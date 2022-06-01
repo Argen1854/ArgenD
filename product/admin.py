@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, CollectionProducts, ImageProducts, Slider
+from .models import Product, CollectionProducts, ImageProducts, Slider, CallBack
 
 
 class GalleryInline(admin.TabularInline):
@@ -11,7 +11,12 @@ class GalleryInline(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
     inlines = [GalleryInline, ]
 
+class CallBackAdmin(admin.ModelAdmin):
+    readonly_fields = ('data',)
+    list_display = ('name', 'data')
+
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(CollectionProducts)
 admin.site.register(Slider)
+admin.site.register(CallBack, CallBackAdmin)

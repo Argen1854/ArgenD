@@ -2,6 +2,15 @@ from django.db import models
 from ckeditor.fields import RichTextField
 from colorfield.fields import ColorField
 
+class CallBack(models.Model):
+    name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=50)
+    data = models.DateField(auto_now_add=True)
+    callback = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.callback)
+
 
 class CollectionProducts(models.Model):
     title = models.CharField(max_length=50)
@@ -11,7 +20,7 @@ class CollectionProducts(models.Model):
     def __str__(self):
         return self.title
 
-    
+
     class Meta:
         verbose_name = 'Коллекция'
         verbose_name_plural = 'Коллекции'
@@ -21,8 +30,6 @@ class Product(models.Model):
     title = models.CharField(max_length=50)
     text = RichTextField()
     vendor_code = models.CharField(max_length=50)
-    price = models.IntegerField()
-    discount = models.IntegerField(null=True, blank=True)
     size_range = models.CharField(max_length=30)
     cloth = models.CharField(max_length=30)
     quantity_in_line = models.IntegerField()
@@ -32,26 +39,28 @@ class Product(models.Model):
 
     collection = models.ForeignKey(CollectionProducts, on_delete=models.CASCADE, related_name='products', null=True, blank=True)
 
+    price = models.IntegerField()
+    discount = models.IntegerField(null=True, blank=True)
+    discount_price = models.IntegerField(null=True, blank=True)
+    new_price = models.IntegerField(null=True, blank=True)
 
-    @property
-    def prices(self):
-        if self.discount == 0 or self.discount == None:
-            return [{'price': self.price, 'discount': self.discount}]
-        else:
-            new_price = self.price - ((self.price//100) * self.discount)
-            return [{'price': self.price,'new_price': new_price, 'discount': self.discount}]
+    def save(self, *args, **kwargs):
+        if self.discount:
+            self.new_price = self.price - ((self.price//100) * self.discount)
+            self.discount_price = (self.price//100) * self.discount
+        super(Product, self).save(*args, **kwargs)
 
 
     @property
     def get_images(self):
         images = ImageProducts.objects.filter(product=self)
-        return [{'id': i.id, 'image': i.image.url} for i in images]
+        return [{'id': i.id, 'image': i.image.url, 'color': i.color} for i in images]
 
 
     def __str__(self):
         return self.title
 
-    
+
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
@@ -71,3 +80,5 @@ class Slider(models.Model):
     class Meta:
         verbose_name = 'Image'
         verbose_name_plural = 'Слайдер'
+
+

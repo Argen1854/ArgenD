@@ -1,7 +1,6 @@
-from re import T
 from django.db import models
 from ckeditor.fields import RichTextField
-
+import re
 
 class About(models.Model):
     title = models.CharField(max_length=20)
@@ -79,3 +78,33 @@ class Offer(models.Model):
     class Meta:
         verbose_name = 'Публичная оферта'
         verbose_name_plural = 'Публичная оферта'
+
+
+
+class FooterOne(models.Model):
+    logo = models.ImageField(upload_to='')
+    text = models.TextField()
+    number = models.CharField(max_length=30)
+
+
+NUMBER = 'Number'
+MAIL = 'Mail'
+INSTAGRAM = 'Instagram'
+TELEGRAM = 'Telegram'
+WHATSAPP = 'WhatsApp'
+FOOTER_CHOICES =[
+    ('Number', NUMBER),
+    ('Mail', MAIL),
+    ('Instagram', INSTAGRAM),
+    ('Telegram', TELEGRAM),
+    ('WhatsApp', WHATSAPP),
+]
+class FooterTwo(models.Model):
+    type = models.CharField(max_length=100, choices=FOOTER_CHOICES)
+    network = models.CharField(max_length=30)
+    link = models.CharField(max_length=200, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.type == WHATSAPP:
+            self.link = 'https://wa.me/'+''.join(re.findall(r'\d' ,self.network))
+        super(FooterTwo, self).save(*args, **kwargs)

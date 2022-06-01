@@ -2,6 +2,7 @@ from django.db import models
 from ckeditor.fields import RichTextField
 from colorfield.fields import ColorField
 
+
 class CallBack(models.Model):
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=50)
@@ -80,5 +81,6 @@ class Slider(models.Model):
     class Meta:
         verbose_name = 'Image'
         verbose_name_plural = 'Слайдер'
+
 
 

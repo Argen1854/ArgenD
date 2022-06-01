@@ -23,7 +23,8 @@ class Cart(object):
         if product_id not in self.cart:
             self.cart[product_id] = {'quantity': 0,
                                     'price': str(product.price),
-                                    'discount_price': str(product.discount_price)}
+                                    'discount_price': str(product.discount_price),
+                                    'quantity_in_line': str(product.quantity_in_line)}
         if update_quantity:
             self.cart[product_id]['quantity'] = quantity
         else:
@@ -60,11 +61,13 @@ class Cart(object):
                 self.cart.values())
         discount = sum(Decimal(item['discount_price']) * item['quantity'] for item in
                 self.cart.values())
+        quantity_in_line = sum(Decimal(item['quantity_in_line']) * item['quantity'] for item in 
+                self.cart.values())
         
-        return {'price': price, 'discount_price': discount}
+        return {'price': price, 'discount_price': discount, 'quantity_in_line': quantity_in_line}
 
     
     def clear(self):
         # удаление корзины из сессии
-        del self.session[settings.CART_SESSION_ID]
-        self.session.modified = True
+        self.cart = self.session[settings.CART_SESSION_ID] = {}
+        self.save()

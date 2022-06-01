@@ -23,8 +23,8 @@ class ProductListSerializer(serializers.ModelSerializer):
         favorites = self.context.get('fav')
         print(favorites)
         if obj.id in favorites:
-            return {'fav': True}
-        return {'fav': False}
+            return True
+        return False
 
 
 class ProductCartSerializer(serializers.ModelSerializer):
@@ -52,9 +52,18 @@ class BenefistSerializer(serializers.ModelSerializer):
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
+    favo = serializers.SerializerMethodField('fav')
+
     class Meta:
         model = Product
-        fields = 'id get_images title vendor_code text size_range cloth quantity_in_line material checkbox_hit checkbox_new collection prices'.split()
+        fields = 'id get_images title vendor_code text size_range cloth quantity_in_line material checkbox_hit checkbox_new collection price discount new_price favo'.split()
+
+    def fav(self, obj):
+        favorites = self.context.get('fav')
+        print(favorites)
+        if obj.id in favorites:
+            return True
+        return False
 
 
 class CollectionSerializer(serializers.ModelSerializer):

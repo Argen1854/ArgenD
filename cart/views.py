@@ -21,7 +21,7 @@ class FavoritesListAPIView(ListAPIView):
 
     def get_queryset(self):
         fav = Favorites(self.request)
-        return Product.objects.filter(id__in=fav.show())
+        return Product.objects.filter(id__in=fav.fav)
 
 
 class FavoritesAddAPIView(APIView):
@@ -51,7 +51,8 @@ class CartListAPIView(APIView):
         price = cart.get_total_price()
         prices = price['price']
         discount = price['discount_price']
-        return Response(data = {'product': products , 'price': prices, 'discount': discount, 'total_price': prices-discount})
+        quantity_in_line = price['quantity_in_line']
+        return Response(data = {'product': products , 'price': prices, 'discount': discount, 'total_price': prices-discount, 'quantity_in_line': quantity_in_line})
 
 
 class CartAddAPIView(APIView):
@@ -69,4 +70,12 @@ class CartDeleteAPIView(APIView):
         card = Cart(request)
         product = get_object_or_404(Product, id = id)
         card.remove(product=product)
+        return Response(data={'message': 'ok'})
+
+
+class CartClearAPIVew(APIView):
+    """Очистка корзины полностью"""
+    def get(self, request):
+        card = Cart(request)
+        card.clear()
         return Response(data={'message': 'ok'})

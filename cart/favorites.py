@@ -34,15 +34,11 @@ class Favorites(object):
     def remove(self, product):
         """Удаление товара из избранного"""
         
-        product_id = str(product.id)
+        product_id = product.id
         if product_id in self.fav:
-            del self.fav[product_id]
+            print(self.fav)
+            self.fav.remove(product_id)
             self.save()
-
-    
-    def show(self):
-        """метод для вывода всех id избранного"""
-        return self.fav
 
     def clear(self):
         # удаление избранного из сессии

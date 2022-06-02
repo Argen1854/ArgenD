@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (ProductListAPIView, CollectionListAPIView, CollectionDetailAPIView, ProductDetailAPIView, 
-SearchAPIView, MainPageNewAPIVIew, MainPageHitAPIVIew, MainSliderAPIView, MainBenefistAPIView, CallbackAPIView)
+SearchAPIView, MainPageNewAPIVIew, MainPageHitAPIVIew, MainSliderAPIView, MainBenefistAPIView, CallbackAPIView,
+CollectionNewAPIView)
 
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path('api/v1/products/<int:id>/', ProductDetailAPIView.as_view()),
     path('api/v1/collection/', CollectionListAPIView.as_view()),
     path('api/v1/collection/<int:id>/', CollectionDetailAPIView.as_view()),
+    path('api/v1/collection/new/', CollectionNewAPIView.as_view()),
 ]

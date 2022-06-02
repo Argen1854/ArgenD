@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import About, AboutImages, Benefits, News, HelpImages, Help, Offer
+from .models import About, AboutImages, Benefits, News, HelpImages, Help, Offer, FooterOne, FooterTwo
 
 
 class AboutInline(admin.TabularInline):
@@ -26,3 +26,5 @@ admin.site.register(Benefits)
 admin.site.register(News)
 admin.site.register(HelpImages, HelpHelp)
 admin.site.register(Offer)
+admin.site.register(FooterOne)
+admin.site.register(FooterTwo)

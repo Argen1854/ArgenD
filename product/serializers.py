@@ -1,7 +1,6 @@
 from rest_framework import serializers
-
 from cart import favorites
-from .models import Product, CollectionProducts, Slider
+from .models import Product, CollectionProducts, Slider, ImageProducts
 from about_us.models import Benefits
 
 
@@ -28,16 +27,18 @@ class ProductListSerializer(serializers.ModelSerializer):
 
 
 class ProductCartSerializer(serializers.ModelSerializer):
-    quantity = serializers.SerializerMethodField('get_context')
-
+    quantity = serializers.SerializerMethodField('get_quantity')
+    image = serializers.SerializerMethodField('get_image')
     class Meta:
         model = Product
-        fields = 'id get_images title text size_range collection price discount new_price quantity'.split()
+        fields = 'id image title text size_range collection price discount new_price quantity'.split()
 
-    def get_context(self, obj):
-        quantity = self.context.get('quantity')[str(obj.id)]['quantity']
+    def get_quantity(self, obj):
+        quantity = self.context.get('filter')[str(obj.id)]['quantity']
         return quantity
-
+    def get_image(self, obj):
+        id = self.context.get('filter')[str(obj.id)]['image']
+        return id
 
 class MainSerializer(serializers.ModelSerializer):
     def get_attribute(self, instance):

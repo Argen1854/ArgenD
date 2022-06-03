@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.conf import settings
-from product.models import Product
+from product.models import Product, ImageProducts
 
 
 class Cart(object):
@@ -17,12 +17,19 @@ class Cart(object):
         self.cart = cart
     
 
-    def add(self, product, quantity=1, update_quantity=False):
-
+    def add(self, product, image_id, quantity=1, update_quantity=False):
         product_id = str(product.id)
+        image = ImageProducts.objects.get(id=image_id)
+        if product_id in self.cart:
+            self.cart[product_id]['image'].append({'id':image_id,
+                                    'color': image.color,
+                                    'image': image.image.url})
         if product_id not in self.cart:
             self.cart[product_id] = {'quantity': 0,
                                     'price': str(product.price),
+                                    'image': [{'id':image_id,
+                                    'color': image.color,
+                                    'image': image.image.url}],
                                     'discount_price': str(product.discount_price),
                                     'quantity_in_line': str(product.quantity_in_line)}
         if update_quantity:
@@ -39,7 +46,7 @@ class Cart(object):
         self.session.modified = True
 
     
-    def remove(self, product):
+    def remove(self, product, image_id):
         """
         Удаление товара из корзины.
         """
@@ -51,10 +58,7 @@ class Cart(object):
 
     def get_all(self):
         product_ids = self.cart.keys()
-        products = Product.objects.filter(id__in = product_ids)
-
-        return products
-
+        return product_ids
     
     def get_total_price(self):
         price = sum(Decimal(item['price']) * item['quantity'] for item in
@@ -63,8 +67,10 @@ class Cart(object):
                 self.cart.values())
         quantity_in_line = sum(Decimal(item['quantity_in_line']) * item['quantity'] for item in 
                 self.cart.values())
+        quantity = sum(Decimal(1) * item['quantity'] for item in 
+                self.cart.values())
         
-        return {'price': price, 'discount_price': discount, 'quantity_in_line': quantity_in_line}
+        return {'price': price, 'discount_price': discount, 'quantity_in_line': quantity_in_line, 'quantity': quantity}
 
     
     def clear(self):

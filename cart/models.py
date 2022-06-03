@@ -1,7 +1,7 @@
 from django.db import models
 from product.models import ImageProducts, Product
 from colorfield.fields import ColorField
-
+from django.utils.html import mark_safe 
 
 
 CHOISES_ORDER = [
@@ -26,6 +26,12 @@ class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     products = models.ForeignKey(Product, on_delete=models.PROTECT)
     image = models.ForeignKey(ImageProducts, on_delete=models.PROTECT)
+
+    
+    def image_tag(self):
+            return mark_safe('<img src="%s" width="150" height="150" />' % (self.image.image.url))
+
+    image_tag.short_description = 'Image'
     
     @property
     def price(self):

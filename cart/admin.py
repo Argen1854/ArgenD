@@ -8,7 +8,8 @@ class OrderInfoInline(admin.TabularInline):
 
 class OrderProductInline(admin.TabularInline):
     model = OrderProduct
-    readonly_fields = ('price', 'new_price', 'size_range', 'color')
+    readonly_fields = ('price', 'new_price', 'size_range', 'color', 'image_tag')
+
 
 class OrderProductAdmin(admin.ModelAdmin):
     inlines = [OrderProductInline, OrderInfoInline,]

@@ -1,11 +1,10 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .models import About, News, HelpImages, Help, Offer
-from .serializers import AboutSerializer, NewsSerializer, HelpImagesSerialiser, HelpISerialiser, OfferSerialiser
+from .models import About, News, HelpImages, Help, Offer, FooterOne, FooterTwo
+from .serializers import AboutSerializer, NewsSerializer, HelpImagesSerialiser, HelpISerialiser, OfferSerialiser, FooterOneSerialiser, FooterTwoSerialiser
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
-
 
 class AboutUsAPIView(APIView):
     """API О нас"""
@@ -41,3 +40,10 @@ class OfferAPIView(APIView):
         return Response(data=data)
 
 
+class FooterAPIView(APIView):
+    def get(self, request):
+        footerone = FooterOne.objects.all()
+        footertwo = FooterTwo.objects.all()
+        data = FooterOneSerialiser(footerone, many=True).data
+        data2 = FooterTwoSerialiser(footertwo, many=True).data
+        return Response(data=data+[{'second' :data2}])

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import About, News, Help, HelpImages, Offer
+from .models import About, News, Help, HelpImages, Offer, FooterTwo, FooterOne
 
 
 class AboutSerializer(serializers.ModelSerializer):
@@ -30,3 +30,15 @@ class OfferSerialiser(serializers.ModelSerializer):
     class Meta:
         model = Offer
         fields = 'title text'.split()
+
+
+class FooterOneSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model = FooterOne
+        fields = '__all__'
+
+
+class FooterTwoSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model = FooterTwo
+        fields = '__all__'

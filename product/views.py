@@ -11,6 +11,8 @@ from cart.favorites import Favorites
 from rest_framework import filters
 import random
 
+
+
 class ProductListAPIView(ListAPIView):
     queryset = Product.objects.all()    
     pagination_class = PageNumberPagination
@@ -156,7 +158,5 @@ class CallbackAPIView(APIView):
         phone = request.data.get('phone')
         movie = CallBack.objects.create(name=name, phone=phone)
         return Response(data={'message': "ok"}, status=status.HTTP_201_CREATED)
-
-
 
     

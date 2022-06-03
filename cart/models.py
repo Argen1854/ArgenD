@@ -20,6 +20,9 @@ class Order(models.Model):
 
     status =models.CharField(max_length=20, choices=CHOISES_ORDER, default='New')
 
+    def __str__(self):
+        return self.name + ' ' + self.second_name
+
 
 class OrderProduct(models.Model):
     quantity = models.IntegerField(null=True, blank=True)

@@ -17,7 +17,7 @@ class Cart(object):
         self.cart = cart
     
 
-    def add(self, product, image_id, quantity=1, update_quantity=False):
+    def add(self, product, image_id, quantity=1):
         product_id = str(product.id)
         image = ImageProducts.objects.get(id=image_id)
         if product_id in self.cart:
@@ -32,12 +32,24 @@ class Cart(object):
                                     'image': image.image.url}],
                                     'discount_price': str(product.discount_price),
                                     'quantity_in_line': str(product.quantity_in_line)}
-        if update_quantity:
-            self.cart[product_id]['quantity'] = quantity
         else:
             self.cart[product_id]['quantity'] += quantity
         self.save()
 
+    def update(self, product, image_id, quantity):
+        product_id = str(product.id)
+        image = ImageProducts.objects.get(id=image_id)
+        if product_id in self.cart:
+            self.cart[product_id]['image'] = []
+            for i in range(quantity):
+                self.cart[product_id]['image'].append({'id':image_id,
+                                    'color': image.color,
+                                    'image': image.image.url})
+            self.cart[product_id]['quantity'] = quantity
+            self.save()
+            return {'message': 'ok'}
+        else:
+            {'message': 'Product not found'}
 
     def save(self):
         # Обновление сессии cart

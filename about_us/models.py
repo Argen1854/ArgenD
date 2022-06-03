@@ -14,6 +14,9 @@ class About(models.Model):
     class Meta:
         verbose_name = 'О нас'
         verbose_name_plural = 'О нас'
+    
+    def __str__(self):
+        return self.title
 
 
 class AboutImages(models.Model):
@@ -31,6 +34,9 @@ class Benefits(models.Model):
     class Meta:
         verbose_name = 'Наши преимущества'
         verbose_name_plural = 'Наши преимущества'
+    
+    def __str__(self):
+        return self.title
 
 
 class News(models.Model):
@@ -45,6 +51,9 @@ class News(models.Model):
     class Meta:
         verbose_name = 'Новость'
         verbose_name_plural = 'Новости'
+    
+    def __str__(self):
+        return self.title
 
 
 class HelpImages(models.Model):
@@ -66,6 +75,9 @@ class Help(models.Model):
     class Meta:
         verbose_name = 'Помощь'
         verbose_name_plural = 'Помощь'
+    
+    def __str__(self):
+        return self.question
 
 
 class Offer(models.Model):
@@ -78,6 +90,9 @@ class Offer(models.Model):
     class Meta:
         verbose_name = 'Публичная оферта'
         verbose_name_plural = 'Публичная оферта'
+    
+    def __str__(self):
+        return self.title
 
 
 

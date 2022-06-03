@@ -1,9 +1,15 @@
 from rest_framework import serializers
 
 
-class CartSesializer(serializers.Serializer):
+class CartSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     image_id = serializers.IntegerField()
+
+
+class CartUpdateSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    image_id = serializers.IntegerField()
+    quantity = serializers.IntegerField()
 
 
 class OrderSerializer(serializers.Serializer):

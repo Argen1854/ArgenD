@@ -7,7 +7,7 @@ from product.serializers import ProductSerializer, ProductCartSerializer
 from .favorites import Favorites
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView
-from .serializer import CartSesializer, OrderSerializer
+from .serializer import CartSerializer, OrderSerializer, CartUpdateSerializer
 from .models import Order, OrderInfo, OrderProduct
 from cart import serializer
 import random
@@ -104,7 +104,7 @@ class CartOrderAPIView(CreateAPIView):
 
 
 class CartAddAPIView(CreateAPIView):
-    serializer_class = CartSesializer
+    serializer_class = CartSerializer
     """Добавить товар в корзину"""
     def post(self, request):
         card = Cart(request)
@@ -113,6 +113,19 @@ class CartAddAPIView(CreateAPIView):
         product = get_object_or_404(Product, id = id)
         card.add(product=product, image_id=image_id)
         return Response(data={'message': 'ok'})
+
+
+class CartUpdateAPIView(CreateAPIView):
+    serializer_class = CartUpdateSerializer
+    """Обновляем товар в корзину"""
+    def post(self, request):
+        card = Cart(request)
+        id = request.data['id']
+        image_id = request.data['image_id']
+        product = get_object_or_404(Product, id = id)
+        quantity = request.data['quantity']
+        data = card.update(product=product, image_id=image_id,quantity=quantity)
+        return Response(data=data)
 
 
 class CartDeleteAPIView(APIView):

@@ -6,7 +6,9 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 
-class AboutUsAPIView(APIView):
+class AboutUsAPIView(ListAPIView):
+    """О нас"""
+    serializer_class = AboutSerializer
     """API О нас"""
     def get(self, request):
         model = About.objects.all()
@@ -22,7 +24,8 @@ class NewsListAPIView(ListAPIView):
     queryset = News.objects.all()
 
 
-class HelpAPIViews(APIView):
+class HelpAPIViews(ListAPIView):
+    serializer_class = HelpISerialiser
     """API помощь"""
     def get(self, request):
         model = Help.objects.all()

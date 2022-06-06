@@ -95,11 +95,9 @@ class CartOrderAPIView(CreateAPIView):
         quantity = price['quantity']
         OrderInfo.objects.create(order_id = order.id, price=prices,discount=discount, total_price=prices-discount,quantity=quantity, quantity_in_line=quantity_in_line)
         for k in cart.cart.keys():
-            image_id = [n['id'] for n in cart.cart[k]['image']]
-            i = set(image_id)
-            for m in i:
-                q = image_id.count(m)
-                OrderProduct.objects.create(order_id= order.id, image_id=m, products_id=k, quantity=q)
+            for i in cart.cart[k]['image'].keys():
+                quantity=cart.cart[k]['image'][str(int(i))]['quantity']
+                OrderProduct.objects.create(order_id= order.id, image_id=int(i), products_id=k, quantity=quantity)
         return Response(data = self.serializer_class(order).data)
 
 
@@ -124,8 +122,8 @@ class CartUpdateAPIView(CreateAPIView):
         image_id = request.data['image_id']
         product = get_object_or_404(Product, id = id)
         quantity = request.data['quantity']
-        data = card.update(product=product, image_id=image_id,quantity=quantity)
-        return Response(data=data)
+        data = card.update(product=product, image_id=image_id, quantity=quantity)
+        return Response(data={'message': 'ok'})
 
 
 class CartDeleteAPIView(APIView):

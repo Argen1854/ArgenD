@@ -4,7 +4,7 @@ from .models import Product, CollectionProducts, Slider, CallBack
 from .serializers import ProductListSerializer, CollectionSerializer, ProductDetailSerializer, BenefistSerializer, SliderSerializer, ProductSerializer, CallbackSesializer
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView
 from django.db.models import Q
 from about_us.models import Benefits
 from cart.favorites import Favorites
@@ -148,10 +148,10 @@ class CollectionNewAPIView(ListAPIView):
             return {'fav': fav.fav}
 
 
-class CallbackAPIView(APIView):
-    serializer = CallbackSesializer
+class CallbackAPIView(CreateAPIView):
+    serializer_class = CallbackSesializer
     def post(self, request):
-        serializer = self.serializer(data = request.data)
+        serializer = self.serializer_class(data = request.data)
         if not serializer.is_valid():
             return Response(data={'errors':serializer.errors}, status=status.HTTP_406_NOT_ACCEPTABLE)
         name = request.data.get('name')

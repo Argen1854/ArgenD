@@ -118,8 +118,12 @@ class FooterTwo(models.Model):
     type = models.CharField(max_length=100, choices=FOOTER_CHOICES)
     network = models.CharField(max_length=30)
     link = models.CharField(max_length=200, null=True, blank=True)
+    footer = models.ForeignKey(FooterOne, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         if self.type == WHATSAPP:
             self.link = 'https://wa.me/'+''.join(re.findall(r'\d' ,self.network))
         super(FooterTwo, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.type

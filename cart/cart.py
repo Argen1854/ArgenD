@@ -20,32 +20,36 @@ class Cart(object):
     def add(self, product, image_id, quantity=1):
         product_id = str(product.id)
         image = ImageProducts.objects.get(id=image_id)
+        image_id = str(image_id)
         if product_id in self.cart:
-            self.cart[product_id]['image'].append({'id':image_id,
+            if image_id not in self.cart[product_id]['image']:
+                self.cart[product_id]['image'][image_id] = {    
                                     'color': image.color,
-                                    'image': image.image.url})
+                                    'image': image.image.url,
+                                    'quantity': 0}
         if product_id not in self.cart:
             self.cart[product_id] = {'quantity': 0,
                                     'price': str(product.price),
-                                    'image': [{'id':image_id,
-                                    'color': image.color,
-                                    'image': image.image.url}],
+                                    'image': {image_id:
+                                    {'color': image.color,
+                                    'image': image.image.url,
+                                    'quantity': 0}},
                                     'discount_price': str(product.discount_price),
                                     'quantity_in_line': str(product.quantity_in_line)}
+            self.cart[product_id]['image'][image_id]['quantity'] += quantity
+            self.cart[product_id]['quantity'] += quantity
         else:
+            self.cart[product_id]['image'][image_id]['quantity'] += quantity
             self.cart[product_id]['quantity'] += quantity
         self.save()
 
     def update(self, product, image_id, quantity):
         product_id = str(product.id)
-        image = ImageProducts.objects.get(id=image_id)
-        if product_id in self.cart:
-            self.cart[product_id]['image'] = []
-            for i in range(quantity):
-                self.cart[product_id]['image'].append({'id':image_id,
-                                    'color': image.color,
-                                    'image': image.image.url})
-            self.cart[product_id]['quantity'] = quantity
+        image_id = str(image_id)
+        if product_id in self.cart and image_id in self.cart[product_id]['image']:
+            self.cart[product_id]['quantity'] -= self.cart[product_id]['image'][image_id]['quantity']
+            self.cart[product_id]['image'][image_id]['quantity'] = quantity
+            self.cart[product_id]['quantity'] += quantity
             self.save()
             return {'message': 'ok'}
         else:

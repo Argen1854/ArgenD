@@ -4,10 +4,13 @@ from .models import Product, CollectionProducts, Slider, CallBack
 from .serializers import ProductListSerializer, CollectionSerializer, ProductDetailSerializer, BenefistSerializer, SliderSerializer, ProductSerializer, CallbackSesializer
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView
 from django.db.models import Q
 from about_us.models import Benefits
 from cart.favorites import Favorites
+from rest_framework import filters
+import random
+
 
 
 class ProductListAPIView(ListAPIView):
@@ -83,13 +86,35 @@ class CollectionListAPIView(ListAPIView):
 class SearchAPIView(ListAPIView):
     queryset = Product.objects.all()
     pagination_class = PageNumberPagination
-    serializer_class = ProductSerializer
+    serializer_class = ProductListSerializer
+    
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title']
 
-    def get_queryset(self):
-        search = self.request.GET['search']
-        if Product.objects.filter(title__contains=search).count() == 0:
-            return Product.objects.order_by('collection_id')[:5]
-        return Product.objects.filter(title__contains=search)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+
+        if queryset.count() == 0:
+            queryset = self.queryset
+            collection_list = set(queryset.values_list('collection'))
+            product = [random.choice(queryset.filter(collection_id = n)) for n in collection_list]
+            serializer = self.get_serializer(product[:5], many=True).data
+            return Response(data=[{'message': f'По вашему запросу ничего не найдено!'}] + serializer)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(data=serializer.data + [{'check_list' : queryset.values_list('title')}])
+
+        return Response(data=serializer.data)
+    
+    def get_serializer_context(self):
+        fav = Favorites(self.request)
+        return {'fav': fav.fav}
+
+
     
 
 class CollectionDetailAPIView(ListAPIView):
@@ -123,17 +148,15 @@ class CollectionNewAPIView(ListAPIView):
             return {'fav': fav.fav}
 
 
-class CallbackAPIView(APIView):
-    serializer = CallbackSesializer
+class CallbackAPIView(CreateAPIView):
+    serializer_class = CallbackSesializer
     def post(self, request):
-        serializer = self.serializer(data = request.data)
+        serializer = self.serializer_class(data = request.data)
         if not serializer.is_valid():
             return Response(data={'errors':serializer.errors}, status=status.HTTP_406_NOT_ACCEPTABLE)
         name = request.data.get('name')
         phone = request.data.get('phone')
         movie = CallBack.objects.create(name=name, phone=phone)
         return Response(data={'message': "ok"}, status=status.HTTP_201_CREATED)
-
-
 
     

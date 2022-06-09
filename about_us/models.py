@@ -14,6 +14,9 @@ class About(models.Model):
     class Meta:
         verbose_name = 'О нас'
         verbose_name_plural = 'О нас'
+    
+    def __str__(self):
+        return self.title
 
 
 class AboutImages(models.Model):
@@ -31,6 +34,9 @@ class Benefits(models.Model):
     class Meta:
         verbose_name = 'Наши преимущества'
         verbose_name_plural = 'Наши преимущества'
+    
+    def __str__(self):
+        return self.title
 
 
 class News(models.Model):
@@ -45,6 +51,9 @@ class News(models.Model):
     class Meta:
         verbose_name = 'Новость'
         verbose_name_plural = 'Новости'
+    
+    def __str__(self):
+        return self.title
 
 
 class HelpImages(models.Model):
@@ -66,6 +75,9 @@ class Help(models.Model):
     class Meta:
         verbose_name = 'Помощь'
         verbose_name_plural = 'Помощь'
+    
+    def __str__(self):
+        return self.question
 
 
 class Offer(models.Model):
@@ -78,6 +90,9 @@ class Offer(models.Model):
     class Meta:
         verbose_name = 'Публичная оферта'
         verbose_name_plural = 'Публичная оферта'
+    
+    def __str__(self):
+        return self.title
 
 
 
@@ -103,8 +118,12 @@ class FooterTwo(models.Model):
     type = models.CharField(max_length=100, choices=FOOTER_CHOICES)
     network = models.CharField(max_length=30)
     link = models.CharField(max_length=200, null=True, blank=True)
+    footer = models.ForeignKey(FooterOne, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         if self.type == WHATSAPP:
             self.link = 'https://wa.me/'+''.join(re.findall(r'\d' ,self.network))
         super(FooterTwo, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.type

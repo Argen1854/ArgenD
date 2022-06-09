@@ -10,6 +10,7 @@ class GalleryInline(admin.TabularInline):
 
 class ProductAdmin(admin.ModelAdmin):
     inlines = [GalleryInline, ]
+    fields = ['title', 'text', 'vendor_code', 'size_range', 'cloth', 'quantity_in_line', 'material', 'checkbox_hit', 'checkbox_new', 'collection', 'price', 'discount']
 
 class CallBackAdmin(admin.ModelAdmin):
     readonly_fields = ('data',)
